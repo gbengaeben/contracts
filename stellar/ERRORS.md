@@ -13,7 +13,7 @@ Error codes are only unique within a contract enum at the Soroban ABI layer, but
 | `stealth-announcer` | none | Panic-only/stateless event emitter today. Reserve `1000-1099` if it gains `#[contracterror]`. |
 | `stealth-registry` / `RegistryError` | `1100-1199` | Existing deployed codes are `1-2`; do not renumber them. Add future variants in the reserved range unless a breaking ABI migration is planned. |
 | `stealth-sender` / `SenderError` | `1200-1299` | Existing deployed codes are `1-16`; do not renumber them. |
-| `stealth-batch-sender` | `1300-1399` | Panic-only today; use this range when issue #1 converts panics to `#[contracterror]`. |
+| `stealth-batch-sender` / `BatchSenderError` | `1300-1399` | Existing deployed codes are `1300-1316`; do not renumber them. |
 | `stealth-vault` / `VaultError` | `1400-1499` | Existing codes are `1-7`; do not renumber them. |
 | `stealth-splitter` / `SplitterError` | `1500-1599` | Existing codes are `1-8`; do not renumber them. |
 | `wraith-names` / `NamesError` | `1600-1699` | Existing codes are `1-32`; do not renumber them. New variants use the reserved range, starting at `1600`. |
@@ -61,11 +61,25 @@ No `#[contracterror]` enum is defined. Current validation failures are panics/as
 
 ## stealth-batch-sender
 
-No `#[contracterror]` enum is defined. This contract is currently panic-only; issue #1 tracks conversion to structured errors.
-
 | Code | Name | Meaning | Introduced in |
 |---:|---|---|---|
-| N/A | Panic-only | Empty batches, oversized batches, non-positive amounts, empty ephemeral keys, and token failures currently abort by panic/host error. | pre-catalog |
+| 1300 | [`BatchSenderError::AlreadyInitialized`](stealth-batch-sender/src/lib.rs#L50) | Contract initialization was attempted more than once. | issue #155 |
+| 1301 | [`BatchSenderError::NotInitialized`](stealth-batch-sender/src/lib.rs#L52) | `batch_send` was called before `init`. | issue #155 |
+| 1302 | [`BatchSenderError::EmptyBatch`](stealth-batch-sender/src/lib.rs#L54) | Batch contains no transfers. | issue #155 |
+| 1303 | [`BatchSenderError::BatchTooLarge`](stealth-batch-sender/src/lib.rs#L56) | Batch exceeds `MAX_BATCH_SIZE` (100). | issue #155 |
+| 1304 | [`BatchSenderError::NonPositiveAmount`](stealth-batch-sender/src/lib.rs#L58) | A transfer amount is zero or negative. | issue #155 |
+| 1305 | [`BatchSenderError::EmptyEphemeralKey`](stealth-batch-sender/src/lib.rs#L60) | A transfer's ephemeral public key is empty. | issue #155 |
+| 1306 | [`BatchSenderError::Paused`](stealth-batch-sender/src/lib.rs#L62) | Contract is paused. | issue #155 |
+| 1307 | [`BatchSenderError::AssetNotAllowed`](stealth-batch-sender/src/lib.rs#L64) | Configured asset policy rejected the token. | issue #155 |
+| 1308 | [`BatchSenderError::MultisigNotInitialized`](stealth-batch-sender/src/lib.rs#L66) | Governance multisig has not been initialized. | issue #155 |
+| 1309 | [`BatchSenderError::MultisigAlreadyInitialized`](stealth-batch-sender/src/lib.rs#L68) | Governance multisig initialization was attempted more than once. | issue #155 |
+| 1310 | [`BatchSenderError::NotSigner`](stealth-batch-sender/src/lib.rs#L70) | Caller is not a current governance signer. | issue #155 |
+| 1311 | [`BatchSenderError::InvalidThreshold`](stealth-batch-sender/src/lib.rs#L72) | Requested multisig threshold is zero or exceeds signer count. | issue #155 |
+| 1312 | [`BatchSenderError::RotationAlreadyPending`](stealth-batch-sender/src/lib.rs#L74) | A signer-rotation proposal already exists. | issue #155 |
+| 1313 | [`BatchSenderError::NoPendingRotation`](stealth-batch-sender/src/lib.rs#L76) | No signer-rotation proposal exists for this action. | issue #155 |
+| 1314 | [`BatchSenderError::AlreadyApprovedRotation`](stealth-batch-sender/src/lib.rs#L78) | Caller already approved the pending rotation. | issue #155 |
+| 1315 | [`BatchSenderError::QuorumNotMet`](stealth-batch-sender/src/lib.rs#L80) | Pending rotation lacks enough approvals. | issue #155 |
+| 1316 | [`BatchSenderError::TimelockNotElapsed`](stealth-batch-sender/src/lib.rs#L82) | Rotation timelock has not elapsed. | issue #155 |
 
 ## stealth-vault
 
@@ -199,3 +213,5 @@ These enums are compiled only for tests or live under test fixtures. They are in
 | 1 | [`MockTokenError::InsufficientBalance`](stealth-sender/src/test_mocks.rs#L26) | Mock token transfer balance is too low. | pre-catalog |
 | 2 | [`MockTokenError::InsufficientAllowance`](stealth-sender/src/test_mocks.rs#L27) | Mock token allowance is too low. | pre-catalog |
 | 11 | [`TokenError::BalanceDeauthorized`](stealth-sender/tests/mocks/token_auth_required.rs#L12) | Test token recipient is not authorized to receive balance. | pre-catalog |
+<!-- ci-retrigger: validate error catalog after ERRORS.md's addition to this branch -->
+<!-- ci-retrigger: attempt 2, dispatch gap on prior push -->

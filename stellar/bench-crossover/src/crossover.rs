@@ -105,6 +105,10 @@ fn measure_batch(n: u32) -> Measured {
 
     let contract_id = env.register(StealthBatchSender, ());
     let client = StealthBatchSenderClient::new(&env, &contract_id);
+    // batch_send now requires init(admin, announcer, asset_policy) (issue #155).
+    let admin = Address::generate(&env);
+    let announcer = Address::generate(&env);
+    client.init(&admin, &announcer, &None);
     let (token, sender) = funded_token(&env);
 
     let mut transfers: SorobanVec<Transfer> = vec![&env];

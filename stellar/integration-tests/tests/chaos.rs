@@ -707,6 +707,12 @@ fn batch_sender_batch_send_through_chaos() {
         let batch_sender_id = env.register(StealthBatchSender, ());
         let client = StealthBatchSenderClient::new(&env, &batch_sender_id);
 
+        // The production-hardening pass (issue #155) added a one-time init
+        // flow — batch_send now returns NotInitialized until init() is called.
+        let admin = Address::generate(&env);
+        let announcer = Address::generate(&env);
+        client.init(&admin, &announcer, &None);
+
         let (token, from) = funded_token(&env);
 
         let stealth1 = Address::generate(&env);

@@ -16,6 +16,7 @@ data: `(caller,)`).
 | stealth-announcer  | No        | Stateless event emitter — no storage, nothing to pause |
 | stealth-registry   | No        | Not implemented; non-custodial metadata writes, registrations are not guarded |
 | stealth-sender     | Yes       | Moves tokens; pause prevents sends during incident |
+| stealth-batch-sender | Yes     | Moves tokens; pause prevents batch sends during incident |
 | wraith-names       | Yes       | Name registry with ownership; pause prevents registrations, updates, releases, and TTL extensions |
 | stealth-vault      | Yes       | Custodies time-locked deposits; pause prevents new deposits during an incident |
 
@@ -29,6 +30,13 @@ Guarded by `require_not_paused`:
 
 NOT guarded (users must be able to exit during an incident):
 - `withdraw_many` — batch asset exits
+
+### stealth-batch-sender
+
+Guarded by `require_not_paused`:
+- `batch_send` — batch token transfers + announcements
+
+There is no withdrawal path in this contract (see stealth-batch-sender/README.md), so there is nothing to leave unguarded for exits.
 
 ### stealth-vault
 

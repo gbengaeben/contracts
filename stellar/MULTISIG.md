@@ -139,13 +139,17 @@ Commit `multisig-setup.log` to your ops runbook repo (not this repository) after
 
 ---
 
-## On-Chain Signer Rotation (`stealth-sender`, `wraith-names`)
+## On-Chain Signer Rotation (`stealth-sender`, `stealth-batch-sender`, `wraith-names`)
 
 The account-level Stellar multisig above governs the *admin key* that submits
 transactions. Separately, `stealth-sender` and `wraith-names` — the two
 contracts GOVERNANCE.md marks **Timelock + Multisig Upgradable** — each keep
 their own on-chain governance signer set and quorum threshold, used to
 authorise a `rotate_signers` flow without a contract redeploy (issue #104).
+`stealth-batch-sender` reuses the identical `propose_/approve_/execute_/
+cancel_rotate_signers` shape and 7-day timelock as of issue #155, though
+GOVERNANCE.md itself has not yet been updated to classify it alongside
+`stealth-sender`/`wraith-names` — worth a follow-up issue.
 
 This is intentionally a second, independent layer: the Stellar account
 multisig above controls *who can submit transactions at all*; the contract's
