@@ -4,3 +4,8 @@ cache
 typechain-types
 reference
 stellar
+**/foundry/out
+**/foundry/cache
+**/subgraph/node_modules
+**/subgraph/generated
+**/subgraph/build
