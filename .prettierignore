@@ -6,6 +6,7 @@ reference
 stellar
 **/foundry/out
 **/foundry/cache
+**/foundry/lib
 **/subgraph/node_modules
 **/subgraph/generated
 **/subgraph/build
