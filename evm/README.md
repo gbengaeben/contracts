@@ -38,8 +38,16 @@ Handler-based invariant suites under `foundry/test/invariant/`, covering
 sender balance conservation, withdrawer atomicity, and name-registration
 monotonicity. Each invariant runs 256 times.
 
+`forge-std` is a pinned git submodule (v1.16.2), so initialize it before
+building. The other two libraries under `foundry/lib/` are symlinks:
+`openzeppelin` → `evm/node_modules/@openzeppelin` (so run `npm ci`
+**first**, otherwise `forge` fails with a missing path) and
+`wraith-contracts` → `evm/contracts`.
+
 ```bash
+npm ci                       # needed for the openzeppelin symlink
 cd foundry
+git submodule update --init --recursive   # fetch pinned forge-std
 forge build
 forge test --match-path 'test/invariant/*'
 ```

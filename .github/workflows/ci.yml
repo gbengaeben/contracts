@@ -45,6 +45,10 @@ jobs:
         working-directory: evm
     steps:
       - uses: actions/checkout@v4
+        with:
+          # forge-std is a pinned submodule (v1.16.2); openzeppelin and
+          # wraith-contracts are symlinks into evm/node_modules and evm/contracts.
+          submodules: recursive
       - uses: actions/setup-node@v4
         with:
           node-version: 22
